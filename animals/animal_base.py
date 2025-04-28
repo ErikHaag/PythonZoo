@@ -5,15 +5,15 @@ class animal:
         self.hunger = 100
         self.activity_timer = 0
     
-    def step(self):
+    def step(self, structureContext):
         # update animal's stats every minute
         self.happiness -= 1
         self.hunger -= 1
         self.activity_timer -= 1
         if self.activity_timer <= 0:
             # only start activity when not already doing one
-            self.maybe_do_activity()
+            self.maybe_do_activity(structureContext)
     
-    def maybe_do_activity(self):
+    def maybe_do_activity(self, structureContext):
         # do action, with certain actions being more important. 
         pass

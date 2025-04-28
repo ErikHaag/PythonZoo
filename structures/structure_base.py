@@ -6,10 +6,10 @@ class structure:
     
     def step(self):
         for animal in self.animals:
-            animal.step()
+            animal.step(self)
         
         for guest in self.guests:
-            guest.step()
+            guest.step(self)
         
         for staff in self.staff:
-            staff.step()
+            staff.step(self)
