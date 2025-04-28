@@ -1,5 +1,5 @@
 from animals import *
-from structures import 
+from structures import *
 import datetime
 
 structures = {}
