@@ -1,4 +1,4 @@
-from structure_base import structure
+from .structure_base import structure
 
 class aquarium(structure):
     def __init__(self):

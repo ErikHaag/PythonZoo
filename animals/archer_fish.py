@@ -1,4 +1,4 @@
-from animal_base import animal
+from .animal_base import animal
 
 class archer_fish(animal):
     def maybe_do_activity(self, structureContext):

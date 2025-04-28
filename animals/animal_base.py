@@ -1,9 +1,10 @@
 class animal:
-    def __init__(self):
+    def __init__(self, name : str):
         # look at that animal!
+        self.activity_timer = 0
         self.happiness = 100
         self.hunger = 100
-        self.activity_timer = 0
+        self.name = name
     
     def step(self, structureContext):
         # update animal's stats every minute
