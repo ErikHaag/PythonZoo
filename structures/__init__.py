@@ -1,1 +1,1 @@
-__all__ = ["structure_base", "aquarium", "entrance", "enclosure"]
+__all__ = ["structure_base", "aquarium", "entrance", "enclosure", "aviary"]
