@@ -1,8 +1,9 @@
 class structure:
     def __init__(self):
-        self.animals = {}
-        self.guests = {}
-        self.staff = {}
+        self.animals = []
+        self.guests = []
+        self.staff = []
+        self.type = ""
     
     def step(self):
         for animal in self.animals:

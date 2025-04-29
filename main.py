@@ -2,10 +2,18 @@ from animals import *
 from structures import *
 import datetime
 
-structures = {}
+# Get the class names of all the children of the animal class
+animal_type_list = [animal_type for animal_type in animal_base.animal.__subclasses__()]
+animal_type_name_list = [animal_type.__name__.replace("_", " ") for animal_type in animal_type_list]
+# similar thing for structures
+structure_type_list = [structure_type.__name__.replace("_", " ") for structure_type in structure_base.structure.__subclasses__()]
+# TO-DO staff
+
+
+built_structures = [entrance.entrance()]
 
 def step():
-    for structure in structures:
+    for structure in built_structures:
         structure.step()
 
 # amount of additions, changes, or deletions required to convert s into t
@@ -26,7 +34,19 @@ def levenshtein_distance(s, t):
         [row_0, row_1] = [row_1, row_0]
     return row_0.pop()
 
-def requestInput(prompt : str, options : list = []):
+def prompt(prompt : str):
+    before = datetime.datetime.now()
+    print(prompt)
+    answer = input("> ")
+    # simulate the period when waiting
+    delta = (datetime.datetime.now() - before).seconds
+    for _ in range(delta):
+        step()
+    if answer == "":
+        answer = "back"
+    return answer
+
+def prompt_options(prompt : str, options : list = []):
     options.append("back")
     before = datetime.datetime.now()
     while True:
@@ -73,7 +93,7 @@ def main():
         match menuID:
             case "main":
                 # add, remove, view, etc.
-                match requestInput("Please select an option:", ["add", "remove", "view", "exit"]):
+                match prompt_options("Please select an option:", ["add", "remove", "view", "exit"]):
                     case "add":
                         menuID = "add"
                     case "exit":
@@ -85,7 +105,7 @@ def main():
                     case _:
                         pass
             case "add":
-                match requestInput("What do you want to add?", ["animal", "staff", "structure"]):
+                match prompt_options("What do you want to add?", ["animal", "staff", "structure"]):
                     case "animal":
                         menuID = "addAnimal"
                     case "structure":
@@ -95,9 +115,21 @@ def main():
                     case _:
                         menuID = "main"
             case "addAnimal":
-                match requestInput("What kind of animal do you want to add?", ["Archer fish"]):
-                    case _:
-                        menuID = "add"
+                if all([s.type != "entrance" for s in built_structures]):
+                    print("You need an entrance first!")
+                    menuID = "add"
+                    continue
+                animal = prompt_options("What kind of animal do you want to add?", animal_type_name_list)
+                if animal == "back":
+                    menuID = "add"
+                    continue
+                animal_name = prompt("What do you want to name your new " + animal + "?")
+                animal_index = animal_type_name_list.index(animal)
+                new_animal = animal_type_list[animal_index](animal_name)
+                entrance_index = [s.type for s in built_structures].index("entrance") 
+                built_structures[entrance_index].animals.append(new_animal)
+                print("\"" + animal_name + "\" is in the entrance")
+                menuID = "add"
             case _:
                 print("menu id \"" + menuID + "\" not found, returning to home.")
                 menuID = "main"
