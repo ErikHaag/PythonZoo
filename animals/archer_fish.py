@@ -29,4 +29,4 @@ class archer_fish(animal):
                     if self.happiness <= 70 and self.hunger >= 80:
                         self.hunger -= 2
                         self.happiness += 6
-                        self.activity_timer = 20
+                        self.activity_timer = 2
