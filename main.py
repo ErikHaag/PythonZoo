@@ -40,7 +40,7 @@ def prompt(prompt : str):
     print(prompt)
     answer = input("> ")
     # simulate the period when waiting
-    delta = (datetime.datetime.now() - before).seconds
+    delta = (datetime.datetime.now() - before).seconds / 30
     for _ in range(delta):
         step()
     if answer == "":
@@ -82,7 +82,7 @@ def prompt_options(prompt : str, options : list = []):
             answer = closest_option
             break
     # simulate the period when navigating the menus
-    delta = (datetime.datetime.now() - before).seconds
+    delta = (datetime.datetime.now() - before).seconds / 30
     for _ in range(delta):
         step()
     return answer
