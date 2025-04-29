@@ -11,7 +11,7 @@ structure_type_name_list = [structure_type.__name__.replace("_", " ") for struct
 # TO-DO staff
 
 
-built_structures = [entrance.entrance()]
+built_structures = [entrance.entrance("entrance")]
 
 def step():
     for structure in built_structures:
