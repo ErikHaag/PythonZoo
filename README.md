@@ -1,5 +1,2 @@
 # PythonZoo
-A zoo simulation for an final assigment
-
-Hello world!
-zoo
+A zoo simulation for a final assigment
