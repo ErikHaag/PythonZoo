@@ -14,6 +14,15 @@ class animal:
         if self.activity_timer <= 0:
             # only start activity when not already doing one
             self.maybe_do_activity(structureContext)
+        if self.hunger < 0:
+            self.hunger = 0
+            self.happiness -= 10
+        if self.hunger > 100:
+            self.hunger = 100
+        if self.happiness < 0:
+            self.happiness = 0
+        if self.happiness > 100:
+            self.happiness
     
     def maybe_do_activity(self, structureContext):
         # do action, with certain actions being more important. 

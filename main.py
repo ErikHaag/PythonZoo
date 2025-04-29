@@ -6,7 +6,8 @@ import datetime
 animal_type_list = [animal_type for animal_type in animal_base.animal.__subclasses__()]
 animal_type_name_list = [animal_type.__name__.replace("_", " ") for animal_type in animal_type_list]
 # similar thing for structures
-structure_type_list = [structure_type.__name__.replace("_", " ") for structure_type in structure_base.structure.__subclasses__()]
+structure_type_list = [structure_type for structure_type in structure_base.structure.__subclasses__() if structure_type.__name__ != "entrance"]
+structure_type_name_list = [structure_type.__name__.replace("_", " ") for structure_type in structure_type_list]
 # TO-DO staff
 
 
@@ -39,7 +40,7 @@ def prompt(prompt : str):
     print(prompt)
     answer = input("> ")
     # simulate the period when waiting
-    delta = (datetime.datetime.now() - before).seconds
+    delta = (datetime.datetime.now() - before).seconds / 30
     for _ in range(delta):
         step()
     if answer == "":
@@ -81,7 +82,7 @@ def prompt_options(prompt : str, options : list = []):
             answer = closest_option
             break
     # simulate the period when navigating the menus
-    delta = (datetime.datetime.now() - before).seconds
+    delta = (datetime.datetime.now() - before).seconds / 30
     for _ in range(delta):
         step()
     return answer
@@ -115,10 +116,6 @@ def main():
                     case _:
                         menuID = "main"
             case "addAnimal":
-                if all([s.type != "entrance" for s in built_structures]):
-                    print("You need an entrance first!")
-                    menuID = "add"
-                    continue
                 animal = prompt_options("What kind of animal do you want to add?", animal_type_name_list)
                 if animal == "back":
                     menuID = "add"
@@ -130,6 +127,15 @@ def main():
                 built_structures[entrance_index].animals.append(new_animal)
                 print("\"" + animal_name + "\" is in the entrance")
                 menuID = "add"
+            case "addStructure":
+                structure = prompt_options("What type of structure do you want to add?", structure_type_name_list)
+                if structure == "back":
+                    menuID = "add"
+                    continue
+                structure_name = prompt("What do you want to name you new " + structure + "?")
+                structure_index = structure_type_name_list.index(structure)
+                new_structure = structure_type_list[structure_index](structure_name)
+                built_structures.append(new_structure)
             case _:
                 print("menu id \"" + menuID + "\" not found, returning to home.")
                 menuID = "main"
