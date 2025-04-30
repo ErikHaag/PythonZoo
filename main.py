@@ -1,3 +1,5 @@
+from master import *
+
 from animals import *
 from structures import *
 import datetime
@@ -11,7 +13,6 @@ structure_type_name_list = [structure_type.__name__.replace("_", " ") for struct
 # TO-DO staff
 
 
-built_structures = [entrance.entrance("entrance")]
 
 def step():
     for structure in built_structures:
@@ -89,6 +90,7 @@ def prompt_options(prompt : str, options : list = []):
 
 
 def main():
+    built_structures = [entrance.entrance("entrance")]
     menuID = "main"
     while True:
         match menuID:
