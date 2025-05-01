@@ -34,23 +34,23 @@ class parrot(animal):
                     # Bird needs to fly
                     if (self.happiness <= 40 or self.hunger <= 70) and (len(structureContext.guests) >= 1 or len(structureContext.staff) >= 1):
                         self.hunger -= 35
-                        self.happiness += 25
+                        self.happiness += 10
                         self.activity_timer = 15
                 case "dance":
                     # he like to do a lil dance when happy
                     if (self.happiness <= 90 or self.hunger <= 100) and (len(structureContext.guests) >= 1 or len(structureContext.staff) >= 1):
                         self.hunger -= 1
-                        self.happiness += 20
+                        self.happiness += 15
                         self.activity_timer = 1
                 case "puzzle":
                     # Bird need activity
                     if (self.happiness >= 40) and (len(structureContext.guests) >= 1 or len(structureContext.staff) >= 1):
                         self.hunger -= 5
-                        self.happiness += 25
+                        self.happiness += 10
                         self.activity_timer = 10
                 case "collect_object":
                     # Bird need activity
                     if (self.happiness >= 40) and (len(structureContext.guests) >= 1 or len(structureContext.staff) >= 1):
                         self.hunger -= 5
-                        self.happiness += 30
+                        self.happiness += 5
                         self.activity_timer = 5
