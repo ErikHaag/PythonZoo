@@ -35,4 +35,4 @@ class lion(animal):
                     if  self.happiness <= 39 and self.hunger <= 30:
                         self.hunger -= 2
                         self.happiness += 10
-                        self.activity_timer = 5
+                        self.activity_timer = 10
