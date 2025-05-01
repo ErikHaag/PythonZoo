@@ -10,10 +10,11 @@ class animal:
         # update animal's stats every minute
         self.happiness -= 1
         self.hunger -= 1
-        self.activity_timer -= 1
         if self.activity_timer <= 0:
             # only start activity when not already doing one
             self.maybe_do_activity(structureContext)
+        else:
+            self.activity_timer -= 1
         if self.hunger < 0:
             self.hunger = 0
             self.happiness -= 10
