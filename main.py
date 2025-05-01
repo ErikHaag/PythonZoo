@@ -2,6 +2,7 @@ from master import *
 
 from animals import *
 from structures import *
+from people import *
 import datetime
 
 # Get the class names of all the children of the animal class
@@ -10,8 +11,9 @@ animal_type_name_list = [animal_type.__name__.replace("_", " ") for animal_type 
 # similar thing for structures
 structure_type_list = [structure_type for structure_type in structure_base.structure.__subclasses__() if structure_type.__name__ != "entrance"]
 structure_type_name_list = [structure_type.__name__.replace("_", " ") for structure_type in structure_type_list]
-# TO-DO staff
-
+# And another for staff
+staff_type_list = staff_base.staff.__subclasses__()
+staff_type_name_list = [staff_type.__name__.replace("_", " ") for staff_type in staff_type_list]
 
 
 def step():
@@ -111,10 +113,10 @@ def main():
                 match prompt_options("What do you want to add?", ["animal", "staff", "structure"]):
                     case "animal":
                         menuID = "addAnimal"
-                    case "structure":
-                        menuID = "addStructure"
                     case "staff":
                         menuID = "addStaff"
+                    case "structure":
+                        menuID = "addStructure"
                     case _:
                         menuID = "main"
             case "addAnimal":
@@ -125,9 +127,20 @@ def main():
                 animal_name = prompt("What do you want to name your new " + animal + "?")
                 animal_index = animal_type_name_list.index(animal)
                 new_animal = animal_type_list[animal_index](animal_name)
-                entrance_index = [s.type for s in built_structures].index("entrance") 
+                entrance_index = [s.type for s in built_structures].index("entrance")
                 built_structures[entrance_index].animals.append(new_animal)
                 print("\"" + animal_name + "\" is in the entrance")
+                menuID = "add"
+            case "addStaff":
+                staff = prompt_options("What type of staff do you want to add?", staff_type_name_list)
+                if staff == "back":
+                    menuID = "add"
+                    continue
+                staff_index = staff_type_name_list.index(staff)
+                new_staff = staff_type_list[staff_index]()
+                entrance_index = [s.type for s in built_structures].index("entrance")
+                built_structures[entrance_index].staff.append(new_staff)
+                print("your new " + staff + " is in the entrance")
                 menuID = "add"
             case "addStructure":
                 structure = prompt_options("What type of structure do you want to add?", structure_type_name_list)
@@ -138,6 +151,13 @@ def main():
                 structure_index = structure_type_name_list.index(structure)
                 new_structure = structure_type_list[structure_index](structure_name)
                 built_structures.append(new_structure)
+                menuID = "add"
+            case "view":
+                match prompt_options("What do you to see", ["animals"]):
+                    case "animals":
+                        menuID = "viewAnimals"
+                    case _:
+                        menuID = "main"
             case _:
                 print("menu id \"" + menuID + "\" not found, returning to home.")
                 menuID = "main"

@@ -1,4 +1,4 @@
-from ..master import *
+from master import *
 from .staff_base import staff
 
 class feeder(staff):
