@@ -6,12 +6,16 @@ class structure:
         self.name = name
         self.type = ""
     
-    def step(self):
+    def step(self, s_i):
         for animal in self.animals:
             animal.step(self)
-        
+
+        i = 0
         for guest in self.guests:
-            guest.step(self)
+            guest.step(self, s_i, i)
+            i += 1
         
+        i = 0
         for staff in self.staff:
-            staff.step(self)
+            staff.step(self, s_i, i)
+            i += 1
