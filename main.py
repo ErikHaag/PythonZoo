@@ -19,6 +19,8 @@ global accumulated_seconds
 accumulated_seconds = 0
 
 def step():
+    global built_structures
+
     i = 0
     for structure in built_structures:
         structure.step(i)
@@ -45,7 +47,7 @@ def levenshtein_distance(s, t):
 def prompt(prompt : str):
     before = datetime.datetime.now()
     print(prompt)
-    answer = input("> ")
+    answer = input("> ").strip()
     # simulate the period when waiting
     delta = (datetime.datetime.now() - before).seconds
     [sim_delta, acc] = divmod(delta, 30)
@@ -77,7 +79,7 @@ def prompt_options(prompt : str, options : list = []):
             print()
         print()
         # get desired request
-        answer = input("> ")
+        answer = input("> ").strip()
         if answer in options:
             break
         # if request isn't valid, find the closest one
@@ -109,6 +111,8 @@ def prompt_options(prompt : str, options : list = []):
 
 
 def main():
+    global built_structures
+
     built_structures = [entrance.entrance("entrance")]
     menuID = "main"
     while True:
@@ -241,5 +245,6 @@ def main():
             case _:
                 print("menu id \"" + menuID + "\" not found, returning to home.")
                 menuID = "main"
+    # TODO?: saving and loading
 
 main()

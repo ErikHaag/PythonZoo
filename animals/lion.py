@@ -1,7 +1,7 @@
-from .animal_base import animal
+from .animal_base import animal_base
 import random
 
-class lion(animal):
+class lion(animal_base):
     def maybe_do_activity(self, structureContext):
         if structureContext.type != "enclosure":
             # the lion should not be let near small dogs
