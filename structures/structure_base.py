@@ -1,4 +1,4 @@
-class structure:
+class structure_base:
     def __init__(self, name : str):
         self.animals = []
         self.guests = []

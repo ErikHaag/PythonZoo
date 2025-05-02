@@ -1,6 +1,6 @@
 # from master import built_structures
 
-class person:
+class person_base:
     def __init__(self):
         self.move_timer = 0
         self.activity_timer = 0

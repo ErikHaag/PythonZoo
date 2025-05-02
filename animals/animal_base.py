@@ -1,4 +1,4 @@
-class animal:
+class animal_base:
     def __init__(self, name : str):
         # look at that animal!
         self.activity_timer = 0

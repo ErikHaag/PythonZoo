@@ -1,7 +1,7 @@
-from .animal_base import animal
+from .animal_base import animal_base
 import random
 
-class parrot(animal):
+class parrot(animal_base):
     def maybe_do_activity(self, structureContext):
         if structureContext.type != "aviary":
             # Parrot need lots of room to fly.

@@ -6,19 +6,23 @@ from people import *
 import datetime
 
 # Get the class names of all the children of the animal class
-animal_type_list = [animal_type for animal_type in animal_base.animal.__subclasses__()]
+animal_type_list = [animal_type for animal_type in animal_base.animal_base.__subclasses__()]
 animal_type_name_list = [animal_type.__name__.replace("_", " ") for animal_type in animal_type_list]
 # similar thing for structures
-structure_type_list = [structure_type for structure_type in structure_base.structure.__subclasses__() if structure_type.__name__ != "entrance"]
+structure_type_list = [structure_type for structure_type in structure_base.structure_base.__subclasses__() if structure_type.__name__ != "entrance"]
 structure_type_name_list = [structure_type.__name__.replace("_", " ") for structure_type in structure_type_list]
 # And another for staff
-staff_type_list = staff_base.staff.__subclasses__()
+staff_type_list = staff_base.staff_base.__subclasses__()
 staff_type_name_list = [staff_type.__name__.replace("_", " ") for staff_type in staff_type_list]
 
+global accumulated_seconds
+accumulated_seconds = 0
 
 def step():
+    i = 0
     for structure in built_structures:
-        structure.step()
+        structure.step(i)
+        i += 1
 
 # amount of additions, changes, or deletions required to convert s into t
 def levenshtein_distance(s, t):
@@ -43,8 +47,15 @@ def prompt(prompt : str):
     print(prompt)
     answer = input("> ")
     # simulate the period when waiting
-    delta = (datetime.datetime.now() - before).seconds // 30
-    for _ in range(delta):
+    delta = (datetime.datetime.now() - before).seconds
+    [sim_delta, acc] = divmod(delta, 30)
+    # prevent fast navigation from stopping time 
+    global accumulated_seconds
+    accumulated_seconds += acc
+    if accumulated_seconds >= 30:
+        accumulated_seconds -= 30
+        sim_delta += 1
+    for _ in range(sim_delta):
         step()
     if answer == "":
         answer = "back"
@@ -66,14 +77,13 @@ def prompt_options(prompt : str, options : list = []):
             print()
         print()
         # get desired request
-        answer = input("> ").lower()
+        answer = input("> ")
         if answer in options:
             break
         # if request isn't valid, find the closest one
         closest_option = ""
         closest_distance = -1
         for option in options:
-            option = option.lower()
             dist = levenshtein_distance(answer, option)
             if dist < closest_distance or closest_distance == -1:
                 closest_distance = dist
@@ -85,8 +95,15 @@ def prompt_options(prompt : str, options : list = []):
             answer = closest_option
             break
     # simulate the period when navigating the menus
-    delta = (datetime.datetime.now() - before).seconds // 30
-    for _ in range(delta):
+    delta = (datetime.datetime.now() - before).seconds
+    [sim_delta, acc] = divmod(delta, 30)
+    # prevent fast navigation from stopping time 
+    global accumulated_seconds
+    accumulated_seconds += acc
+    if accumulated_seconds >= 30:
+        accumulated_seconds -= 30
+        sim_delta += 1
+    for _ in range(sim_delta):
         step()
     return answer
 
@@ -124,7 +141,15 @@ def main():
                 if animal == "back":
                     menuID = "add"
                     continue
-                animal_name = prompt("What do you want to name your new " + animal + "?")
+                # 2 loops for the price of one, grandma!
+                structure_names = [a.name for s in built_structures for a in s.animals]
+                while True:
+                    animal_name = prompt("What do you want to name your new " + animal + "?")
+                    animal_name = animal_name.strip()
+                    animal_name = animal_name[0].upper() + animal_name[1:]
+                    if animal_name not in structure_names:
+                        break
+                    print("An animal already has that name!")
                 animal_index = animal_type_name_list.index(animal)
                 new_animal = animal_type_list[animal_index](animal_name)
                 entrance_index = [s.type for s in built_structures].index("entrance")
@@ -147,7 +172,19 @@ def main():
                 if structure == "back":
                     menuID = "add"
                     continue
-                structure_name = prompt("What do you want to name you new " + structure + "?")
+                structure_names = [s.name for s in built_structures]
+                go_back = False
+                while True:
+                    structure_name = prompt("What do you want to name you new " + structure + "?")
+                    if structure_name == "back":
+                        go_back = True
+                        break
+                    if structure_name not in structure_names:
+                        break
+                    print("An structure already has that name!")
+                if go_back:
+                    menuID = "add"
+                    continue
                 structure_index = structure_type_name_list.index(structure)
                 new_structure = structure_type_list[structure_index](structure_name)
                 built_structures.append(new_structure)
@@ -158,6 +195,49 @@ def main():
                         menuID = "viewAnimals"
                     case _:
                         menuID = "main"
+            case "viewAnimals":
+                animal_list = []
+                animal_location_list = []
+                str_i = 0
+                for structure in built_structures:
+                    ani_i = 0
+                    for animal in structure.animals:
+                        animal_list.append(animal.name)
+                        animal_location_list.append([str_i, ani_i])
+                        ani_i += 1
+                    str_i += 1
+                animal = prompt_options("Which animal?", animal_list)
+                if animal == "back":
+                    menuID = "view"
+                    continue
+                animal_index = animal_list.index(animal)
+                location_index = animal_location_list[animal_index]
+                structure_location = built_structures[location_index[0]]
+                animal_location = structure_location.animals[location_index[1]]
+                print("Location: " + structure_location.name)
+                print("Stats:")
+                # TODO?: make bar graph
+                print("Happiness: " + str(animal_location.happiness))
+                print("Hunger:    " + str(animal_location.hunger))
+                print("Activity:  " + str(animal_location.activity_timer))
+                print("\nDo you want to move this animal?")
+                if input("> ") not in ("sure", "y", "yes", "yep"):
+                    menuID = "view"
+                    continue
+                structure_names = [s.name for s in built_structures]
+                structure_to_move = prompt_options("Where would you like to move " + animal + "?", structure_names)
+                if structure_to_move == "back":
+                    menuID = "view"
+                    continue
+                structure_to_move_index = structure_names.index(structure_to_move)
+                if structure_to_move_index == location_index[0]:
+                    print(animal + " is already there!")
+                    menuID = "view"
+                    continue
+                # move the animal
+                built_structures[structure_to_move_index].animals.append(built_structures[location_index[0]].animals.pop(location_index[1]))
+                print(animal + " has been moved")
+                menuID = "view"
             case _:
                 print("menu id \"" + menuID + "\" not found, returning to home.")
                 menuID = "main"

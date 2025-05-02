@@ -1,6 +1,6 @@
-from .person_base import person
+from .person_base import person_base
 
-class staff(person):
+class staff_base(person_base):
     def __init__(self):
         super().__init__()
         self.role = ""

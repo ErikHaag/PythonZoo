@@ -1,7 +1,7 @@
-from .animal_base import animal
+from .animal_base import animal_base
 import random
 
-class betta_fish(animal):
+class betta_fish(animal_base):
     def maybe_do_activity(self, structureContext):
         if structureContext.type != "aquarium":
             # the fish doesn't like to be in a bag somewhere.

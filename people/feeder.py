@@ -1,7 +1,7 @@
 from master import *
-from .staff_base import staff
+from .staff_base import staff_base
 
-class feeder(staff):
+class feeder(staff_base):
     def __init__(self):
         super().__init__()
         self.role = "feeder"
