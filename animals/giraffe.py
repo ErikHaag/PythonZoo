@@ -6,14 +6,17 @@ class giraffe(animal_base):
         if structureContext.type != "enclosure":
             # Land and need lots of room
             self.happiness -= 8
-        has_feeder = False
+        feeder_index = -1
+        i = 0
         for staff in structureContext.staff:
             if staff.role == "feeder":
-                has_feeder = True
+                feeder_index = i
                 break
-        if self.hunger <= 30 and has_feeder:
+            i += 1
+        if self.hunger <= 30 and feeder_index != -1:
             self.hunger += 50
             self.happiness += 10
+            structureContext.staff[feeder_index].activity_timer = 4
             self.activity_timer = 3
             return
         if random.random() >= 0.2:

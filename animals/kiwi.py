@@ -6,14 +6,17 @@ class kiwi(animal_base):
         if structureContext.type != "aviary":
             # i dont think these things can fly but they're birds and frankly thats all that matters
             self.happiness -= 5
-        has_feeder = False
+        feeder_index = -1
+        i = 0
         for staff in structureContext.staff:
             if staff.role == "feeder":
-                has_feeder = True
+                feeder_index = i
                 break
-        if self.hunger <= 30 and has_feeder:
+            i += 1
+        if self.hunger <= 30 and feeder_index != -1:
             self.hunger += 50
             self.happiness += 10
+            structureContext.staff[feeder_index].activity_timer = 2
             self.activity_timer = 3
             return
         if random.random() >= 0.2:

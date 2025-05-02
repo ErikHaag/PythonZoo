@@ -1,19 +1,21 @@
-from .animal_base import animal_base
+from .animal_base import animal
 import random
 
-class lion(animal_base):
+class lion(animal):
     def maybe_do_activity(self, structureContext):
         if structureContext.type != "enclosure":
             # the lion should not be let near small dogs
             self.happiness -= 4
-        has_feeder = False
+        feeder_index = -1
+        i = 0
         for staff in structureContext.staff:
             if staff.role == "feeder":
-                has_feeder = True
+                feeder_index = i
                 break
-        if self.hunger <= 30 and has_feeder:
-            self.hunger += 50
+            i += 1
+        if self.hunger <= 30 and feeder_index != -1:
             self.happiness += 10
+            structureContext.staff[feeder_index].activity_timer = 4
             self.activity_timer = 3
             return
         if random.random() >= 0.2:
