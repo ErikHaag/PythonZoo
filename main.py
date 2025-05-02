@@ -63,19 +63,40 @@ def prompt(prompt : str):
         answer = "back"
     return answer
 
-def prompt_options(prompt : str, options : list = []):
+def prompt_options(prompt : str, options : list = [], additions : list = [], columns : int = 2):
+    has_additions = len(additions) != 0
+    if has_additions:
+        if len(options) != len(additions):
+            raise ValueError("additions must be empty or have the same length as options")
+        additions.append("")
     options.append("back")
     before = datetime.datetime.now()
     while True:
         print(prompt)
-        on_left = True
-        for option in options:
-            if on_left:
-                print(option, end="")
-            else:
-                print("   ", option)
-            on_left = not on_left
-        if not on_left:
+        column = 0
+        if has_additions:
+            for option, addition in zip(options, additions):
+                if columns <= 1:
+                    print(option, addition)
+                elif column == 0:
+                    print(option, addition, end="")
+                elif column == columns -1:
+                    print("   ", option, addition)
+                else:
+                    print("   ", option, addition, end="")
+                column = (column + 1) % columns
+        else:
+            for option in options:
+                if columns <= 1:
+                    print(option)
+                elif column == 0:
+                    print(option, end="")
+                elif column == columns -1:
+                    print("   ", option)
+                else:
+                    print("   ", option, end="")
+                column = (column + 1) % columns
+        if column != 0:
             print()
         print()
         # get desired request
@@ -119,7 +140,7 @@ def main():
         match menuID:
             case "main":
                 # add, remove, view, etc.
-                match prompt_options("Please select an option:", ["add", "remove", "view", "exit"]):
+                match prompt_options("Please select an option:", options=["add", "remove", "view", "exit"]):
                     case "add":
                         menuID = "add"
                     case "exit":
@@ -131,7 +152,7 @@ def main():
                     case _:
                         pass
             case "add":
-                match prompt_options("What do you want to add?", ["animal", "staff", "structure"]):
+                match prompt_options("What do you want to add?", options=["animal", "staff", "structure"]):
                     case "animal":
                         menuID = "addAnimal"
                     case "staff":
@@ -141,27 +162,30 @@ def main():
                     case _:
                         menuID = "main"
             case "addAnimal":
-                animal = prompt_options("What kind of animal do you want to add?", animal_type_name_list)
-                if animal == "back":
+                new_animal_type = prompt_options("What kind of animal do you want to add?", options=animal_type_name_list, columns = 3)
+                if new_animal_type == "back":
                     menuID = "add"
                     continue
                 # 2 loops for the price of one, grandma!
                 structure_names = [a.name for s in built_structures for a in s.animals]
                 while True:
-                    animal_name = prompt("What do you want to name your new " + animal + "?")
-                    animal_name = animal_name.strip()
-                    animal_name = animal_name[0].upper() + animal_name[1:]
-                    if animal_name not in structure_names:
+                    new_animal_name = prompt("What do you want to name your new " + new_animal_type + "?")
+                    new_animal_name = new_animal_name[0].upper() + new_animal_name[1:]
+                    if new_animal_name not in structure_names:
                         break
                     print("An animal already has that name!")
-                animal_index = animal_type_name_list.index(animal)
-                new_animal = animal_type_list[animal_index](animal_name)
+                # Get the constructor...
+                animal_index = animal_type_name_list.index(new_animal_type)
+                # ...and create a new instance
+                new_animal = animal_type_list[animal_index](new_animal_name)
+                # find the entrance in the built structures
                 entrance_index = [s.type for s in built_structures].index("entrance")
+                # and place the new animal there
                 built_structures[entrance_index].animals.append(new_animal)
-                print("\"" + animal_name + "\" is in the entrance")
+                print("\"" + new_animal_name + "\" is in the entrance")
                 menuID = "main"
             case "addStaff":
-                staff = prompt_options("What type of staff do you want to add?", staff_type_name_list)
+                staff = prompt_options("What type of staff do you want to add?", options=staff_type_name_list)
                 if staff == "back":
                     menuID = "add"
                     continue
@@ -172,7 +196,7 @@ def main():
                 print("your new " + staff + " is in the entrance")
                 menuID = "main"
             case "addStructure":
-                structure = prompt_options("What type of structure do you want to add?", structure_type_name_list)
+                structure = prompt_options("What type of structure do you want to add?", options=structure_type_name_list)
                 if structure == "back":
                     menuID = "add"
                     continue
@@ -194,28 +218,32 @@ def main():
                 built_structures.append(new_structure)
                 menuID = "main"
             case "view":
-                match prompt_options("What do you to see", ["animals"]):
+                match prompt_options("What do you to see", options=["animals", "structures"]):
                     case "animals":
                         menuID = "viewAnimals"
+                    case "structures":
+                        menuID = "viewStructures"
                     case _:
                         menuID = "main"
             case "viewAnimals":
-                animal_list = []
-                animal_location_list = []
+                current_animals = []
+                current_animal_types = []
+                current_animal_locations = []
                 str_i = 0
                 for structure in built_structures:
                     ani_i = 0
-                    for animal in structure.animals:
-                        animal_list.append(animal.name)
-                        animal_location_list.append([str_i, ani_i])
+                    for animal_type in structure.animals:
+                        current_animals.append(animal_type.name)
+                        current_animal_types.append(type(animal_type).__name__.replace("_", " "))
+                        current_animal_locations.append([str_i, ani_i])
                         ani_i += 1
                     str_i += 1
-                animal = prompt_options("Which animal?", animal_list)
-                if animal == "back":
+                new_animal_type = prompt_options("Which animal?", options = current_animals, additions=["(" + cat + ")" for cat in current_animal_types])
+                if new_animal_type == "back":
                     menuID = "view"
                     continue
-                animal_index = animal_list.index(animal)
-                location_index = animal_location_list[animal_index]
+                animal_index = current_animals.index(new_animal_type)
+                location_index = current_animal_locations[animal_index]
                 structure_location = built_structures[location_index[0]]
                 animal_location = structure_location.animals[location_index[1]]
                 print("Location: " + structure_location.name)
@@ -229,18 +257,18 @@ def main():
                     menuID = "main"
                     continue
                 structure_names = [s.name for s in built_structures]
-                structure_to_move = prompt_options("Where would you like to move " + animal + "?", structure_names)
+                structure_to_move = prompt_options("Where would you like to move " + new_animal_type + "?", options=structure_names)
                 if structure_to_move == "back":
                     menuID = "main"
                     continue
                 structure_to_move_index = structure_names.index(structure_to_move)
                 if structure_to_move_index == location_index[0]:
-                    print(animal + " is already there!")
+                    print(new_animal_type + " is already there!")
                     menuID = "main"
                     continue
                 # move the animal
                 built_structures[structure_to_move_index].animals.append(built_structures[location_index[0]].animals.pop(location_index[1]))
-                print(animal + " has been moved")
+                print(new_animal_type + " has been moved")
                 menuID = "main"
             case _:
                 print("menu id \"" + menuID + "\" not found, returning to home.")
