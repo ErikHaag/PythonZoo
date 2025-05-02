@@ -155,7 +155,7 @@ def main():
                 entrance_index = [s.type for s in built_structures].index("entrance")
                 built_structures[entrance_index].animals.append(new_animal)
                 print("\"" + animal_name + "\" is in the entrance")
-                menuID = "add"
+                menuID = "main"
             case "addStaff":
                 staff = prompt_options("What type of staff do you want to add?", staff_type_name_list)
                 if staff == "back":
@@ -166,7 +166,7 @@ def main():
                 entrance_index = [s.type for s in built_structures].index("entrance")
                 built_structures[entrance_index].staff.append(new_staff)
                 print("your new " + staff + " is in the entrance")
-                menuID = "add"
+                menuID = "main"
             case "addStructure":
                 structure = prompt_options("What type of structure do you want to add?", structure_type_name_list)
                 if structure == "back":
@@ -188,7 +188,7 @@ def main():
                 structure_index = structure_type_name_list.index(structure)
                 new_structure = structure_type_list[structure_index](structure_name)
                 built_structures.append(new_structure)
-                menuID = "add"
+                menuID = "main"
             case "view":
                 match prompt_options("What do you to see", ["animals"]):
                     case "animals":
@@ -222,22 +222,22 @@ def main():
                 print("Activity:  " + str(animal_location.activity_timer))
                 print("\nDo you want to move this animal?")
                 if input("> ") not in ("sure", "y", "yes", "yep"):
-                    menuID = "view"
+                    menuID = "main"
                     continue
                 structure_names = [s.name for s in built_structures]
                 structure_to_move = prompt_options("Where would you like to move " + animal + "?", structure_names)
                 if structure_to_move == "back":
-                    menuID = "view"
+                    menuID = "main"
                     continue
                 structure_to_move_index = structure_names.index(structure_to_move)
                 if structure_to_move_index == location_index[0]:
                     print(animal + " is already there!")
-                    menuID = "view"
+                    menuID = "main"
                     continue
                 # move the animal
                 built_structures[structure_to_move_index].animals.append(built_structures[location_index[0]].animals.pop(location_index[1]))
                 print(animal + " has been moved")
-                menuID = "view"
+                menuID = "main"
             case _:
                 print("menu id \"" + menuID + "\" not found, returning to home.")
                 menuID = "main"
