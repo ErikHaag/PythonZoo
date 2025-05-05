@@ -168,6 +168,9 @@ def main():
                     if new_animal_name not in current_structure_names:
                         break
                     print("An animal already has that name!")
+                if new_animal_name == "Back":
+                    menuID = "add"
+                    continue
                 # Get the constructor...
                 animal_index = animal_type_name_list.index(new_animal_type)
                 # ...and create a new instance
