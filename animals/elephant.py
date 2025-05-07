@@ -4,7 +4,7 @@ import random
 class elephant(animal_base):
     def maybe_do_activity(self, structureContext):
         if structureContext.type != "enclosure":
-            # rhino not supposed to be under water
+            # elephant not supposed to be under water
             self.happiness -= 4
         feeder_index = -1
         i = 0
