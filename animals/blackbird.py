@@ -24,12 +24,12 @@ class blackbird(animal_base):
             match random.choice(["search", "search", "search", "sing", "sing", "sing", "sing", "pester", "fly", "fly", "fly", "fly", "fly", "fly", "fly", "fly", ]):
                 case "sing":
                     # Bird like to sing
-                    if  self.happiness <= 60 or self.hunger <= 70
+                    if  self.happiness <= 60 or self.hunger <= 70:
                         self.happiness += 7
                         self.activity_timer = 1
                 case "fly":
                     # Bird needs to fly
-                    if self.happiness <= 40 or self.hunger <= 70 
+                    if self.happiness <= 40 or self.hunger <= 70: 
                         self.hunger -= 35
                         self.happiness += 10
                         self.activity_timer = 15
