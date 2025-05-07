@@ -20,14 +20,14 @@ class gorilla(animal_base):
             self.activity_timer = 3
             return
         if random.random() >= 0.2:
-            match random.choice(["contemplate", "contemplate", "contemplate", "contemplate", "beat chest", "hoot", "holler"]):
+            match random.choice(["contemplate", "contemplate", "contemplate", "contemplate", "beat_chest", "hoot", "holler"]):
                 case "contemplate":
                     # unlike the orangutan the gorilla subcribes to western philosophy
                     if  self.happiness >= 75 or self.hunger >= 60:
                         self.hunger -= 1
                         self.happiness += 10
                         self.activity_timer = 15
-                case "beat chest":
+                case "beat_chest":
                     # beatin that shit up
                     if  self.happiness < 75 and self.hunger >= 60:
                         self.hunger -= 5
