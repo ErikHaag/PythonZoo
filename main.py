@@ -212,6 +212,7 @@ def main():
                 structure_index = structure_type_name_list.index(new_structure_type)
                 new_structure = structure_type_list[structure_index](new_structure_name)
                 built_structures.append(new_structure)
+                print(new_structure_name + " has been built.")
                 menu_id = "main"
             case "remove":
                 match prompt_options("What do you want to remove?", options=["animal", "staff", "structure"]):
