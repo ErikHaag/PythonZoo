@@ -53,6 +53,21 @@ def levenshtein_distance(s, t):
         [row_0, row_1] = [row_1, row_0]
     return row_0.pop()
 
+def display_columns(l : list, columns : int = 2):
+    column = 0
+    for line in l:
+        if columns <= 1:
+            print(line)
+        elif column == 0:
+            print(line, end="")
+        elif column == columns -1:
+            print("   ", line)
+        else:
+            print("   ", line, end="")
+        column = (column + 1) % columns
+    if column != 0:
+        print()
+
 def prompt(prompt : str):
     before = datetime.datetime.now()
     print(prompt)
@@ -63,7 +78,7 @@ def prompt(prompt : str):
         answer = "back"
     return answer
 
-def prompt_options(prompt : str, options : list = [], additions : list = [], columns : int = 2, include_back = True):
+def prompt_options(prompt : str, options : list = [], additions : list = [], columns : int = 2, include_back : bool = True):
     has_additions = len(additions) != 0
     if has_additions:
         if len(options) != len(additions):
@@ -75,31 +90,10 @@ def prompt_options(prompt : str, options : list = [], additions : list = [], col
     before = datetime.datetime.now()
     while True:
         print(prompt)
-        column = 0
+        display = options
         if has_additions:
-            for option, addition in zip(options, additions):
-                if columns <= 1:
-                    print(option, addition)
-                elif column == 0:
-                    print(option, addition, end="")
-                elif column == columns -1:
-                    print("   ", option, addition)
-                else:
-                    print("   ", option, addition, end="")
-                column = (column + 1) % columns
-        else:
-            for option in options:
-                if columns <= 1:
-                    print(option)
-                elif column == 0:
-                    print(option, end="")
-                elif column == columns -1:
-                    print("   ", option)
-                else:
-                    print("   ", option, end="")
-                column = (column + 1) % columns
-        if column != 0:
-            print()
+            display = [o + " " + a for o, a in zip(options, additions)]
+        display_columns(display, columns)
         print()
         # get desired request
         answer = input("> ").strip()
@@ -206,7 +200,7 @@ def main():
                         break
                     if new_structure_name not in current_structure_names:
                         break
-                    print("An structure already has that name!")
+                    print("A structure already has that name!")
                 if go_back:
                     menuID = "add"
                     continue
@@ -214,6 +208,16 @@ def main():
                 new_structure = structure_type_list[structure_index](new_structure_name)
                 built_structures.append(new_structure)
                 menuID = "main"
+            case "remove":
+                match prompt_options("What do you want to remove?", options=["animal", "structure", "staff"]):
+                    case "animal":
+                        menuID = "removeAnimal"
+                    case "structure":
+                        menuID = "removeStructure"
+                    case "staff":
+                        menuID = "removeStaff"
+                    case _:
+                        menuID = "main"
             case "view":
                 match prompt_options("What do you to see", options=["animals", "structures"]):
                     case "animals":
@@ -231,11 +235,11 @@ def main():
                     ani_i = 0
                     for animal_type in new_structure_type.animals:
                         current_animals.append(animal_type.name)
-                        current_animal_types.append(type(animal_type).__name__.replace("_", " "))
+                        current_animal_types.append("(" + type(animal_type).__name__.replace("_", " ") + ")")
                         current_animal_locations.append([str_i, ani_i])
                         ani_i += 1
                     str_i += 1
-                new_animal_type = prompt_options("Which animal?", options = current_animals, additions=["(" + cat + ")" for cat in current_animal_types])
+                new_animal_type = prompt_options("Which animal?", options=current_animals, additions=current_animal_types)
                 if new_animal_type == "back":
                     menuID = "view"
                     continue
@@ -266,6 +270,30 @@ def main():
                 # move the animal
                 built_structures[structure_to_move_index].animals.append(built_structures[location_index[0]].animals.pop(location_index[1]))
                 print(new_animal_type + " has been moved")
+                menuID = "main"
+            case "viewStructures":
+                current_structure_names = [s.name for s in built_structures]
+                current_structure_types = ["(" + s.type + ")" for s in built_structures]
+                view_structure_name = prompt_options("Which structure?", options=current_structure_names, additions=current_structure_types, columns=3)
+                if view_structure_name == "back":
+                    menuID = "main"
+                    continue
+                view_structure_index = current_structure_names.index(view_structure_name)
+                view_structure = built_structures[view_structure_index]
+                match prompt_options("What do you want to see inside " + view_structure_name + "?", ["animals", "staff"]):
+                    case "animals":
+                        print("There are " + len(view_structure.animals) + " animals here")
+                        display_columns([a.name + "  (" + a.__name__.replace("_", " ") + ")" for a in view_structure.animals], 3)
+                    case "staff":
+                        staff_count = dict()
+                        for s in view_structure.staff:
+                            if staff_count[s.role] == None:
+                                staff_count[s.role] = 0
+                            staff_count[s.role] += 1
+                        print("There are " + len(view_structure.staff) + " staff members here")
+                        display_columns([c + " " + s for s, c in staff_count], 3)
+                    case _:
+                        pass
                 menuID = "main"
             case _:
                 print("menu id \"" + menuID + "\" not found, returning to home.")
