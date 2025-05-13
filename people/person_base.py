@@ -13,5 +13,5 @@ class person_base:
         if self.activity_timer < 0:
             self.move_timer -= 1
     
-    def maybe_move(self, structureContext):
+    def maybe_move(self, structureContext, s_i, p_i):
         pass

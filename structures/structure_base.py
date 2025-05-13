@@ -1,3 +1,5 @@
+import random
+
 class structure_base:
     def __init__(self, name : str):
         self.animals = []
@@ -7,15 +9,24 @@ class structure_base:
         self.type = ""
     
     def step(self, s_i):
-        for animal in self.animals:
-            animal.step(self)
-
-        i = 0
-        for guest in self.guests:
-            guest.step(self, s_i, i)
-            i += 1
+        # update animals in random order
+        indices = list(range(len(self.animals)))
+        random.shuffle(indices)
+        for i in indices:
+            self.animals[i].step(self)
         
-        i = 0
-        for staff in self.staff:
-            staff.step(self, s_i, i)
-            i += 1
+        # update guests in random order
+        indices = list(range(len(self.guests)))
+        random.shuffle(indices)
+        for i in indices:
+            self.guests[i].step(self, s_i, i)
+        # remove moved staff
+        self.guests = [g for g in self.guests if self.guests != "gone"]
+
+        # update staff in random order
+        indices = list(range(len(self.staff)))
+        random.shuffle(indices)
+        for i in indices:
+            self.staff[i].step(self, s_i, i)
+        # remove moved guests
+        self.guests = [s for s in self.staff if self.staff != "gone"]

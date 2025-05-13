@@ -3,7 +3,9 @@ from master import *
 from animals import *
 from structures import *
 from people import *
+
 import datetime
+import random
 
 # Get the class names of all the children of the animal class
 animal_type_list = [animal_type for animal_type in animal_base.animal_base.__subclasses__()]
@@ -29,11 +31,10 @@ def step(delta: datetime.timedelta):
         accumulated_seconds -= 30
         sim_delta += 1
     for _ in range(sim_delta):
-        # TODO: shuffle the update order
-        i = 0
-        for structure in built_structures:
-            structure.step(i)
-            i += 1
+        indices = list(range(len(built_structures)))
+        random.shuffle(indices)
+        for i in indices:
+            built_structures[i].step(i)
 
 # amount of additions, changes, or deletions required to convert s into t
 def levenshtein_distance(s, t):
