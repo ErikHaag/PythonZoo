@@ -20,7 +20,7 @@ class structure_base:
         random.shuffle(indices)
         for i in indices:
             self.guests[i].step(self, s_i, i)
-        # remove moved staff
+        # remove moved guest
         self.guests = [g for g in self.guests if self.guests != "gone"]
 
         # update staff in random order

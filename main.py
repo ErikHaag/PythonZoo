@@ -158,11 +158,11 @@ def main():
                     menu_id = "add"
                     continue
                 # 2 loops for the price of one, grandma!
-                current_structure_names = [a.name for s in built_structures for a in s.animals]
+                current_animal_names = [a.name for s in built_structures for a in s.animals]
                 while True:
                     new_animal_name = prompt("What do you want to name your new " + new_animal_type + "?")
                     new_animal_name = new_animal_name[0].upper() + new_animal_name[1:]
-                    if new_animal_name not in current_structure_names:
+                    if new_animal_name not in current_animal_names:
                         break
                     print("An animal already has that name!")
                 if new_animal_name == "Back":
@@ -340,18 +340,22 @@ def main():
                     continue
                 view_structure_index = current_structure_names.index(view_structure_name)
                 view_structure = built_structures[view_structure_index]
-                match prompt_options("What do you want to see inside " + view_structure_name + "?", ["animals", "staff"]):
+                match prompt_options("What do you want to see inside " + view_structure_name + "?", ["animals", "people"]):
                     case "animals":
                         print("There are " + len(view_structure.animals) + " animals here")
                         display_columns([a.name + "  (" + a.__name__.replace("_", " ") + ")" for a in view_structure.animals], 3)
-                    case "staff":
+                    case "people":
                         staff_count = dict()
                         for s in view_structure.staff:
                             if staff_count.get(s.role, -1) == -1:
                                 staff_count[s.role] = 0
                             staff_count[s.role] += 1
-                        print("There are " + str(len(view_structure.staff)) + " staff members here")
+                        print ("There are " + str(len(view_structure.guests)) + " guests")
+                        print("and " + str(len(view_structure.staff)) + " staff members here")
                         display_columns([str(c) + "x " + s for s, c in staff_count.items()], 3)
+                    case "back":
+                        menu_id = "viewStructures"
+                        continue
                     case _:
                         pass
                 menu_id = "main"

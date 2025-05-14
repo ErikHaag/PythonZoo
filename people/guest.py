@@ -22,3 +22,4 @@ class guest(person_base):
                 self.structures_seen.append(s.name)
                 built_structures[i].guests.append(built_structures[s_i].guests[p_i])
                 built_structures[s_i].guests[p_i] = "gone"
+                return

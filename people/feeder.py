@@ -24,3 +24,4 @@ class feeder(staff_base):
         if smallest_hunger < smallest_local_hunger - 10:
             built_structures[smallest_hunger_index].staff.append(built_structures[structure_i].staff[staff_i])
             built_structures[structure_i].staff[staff_i] = "gone"
+            return
