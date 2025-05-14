@@ -2,13 +2,21 @@ __all__ = [
         "animal_base",
         "archer_fish",
         "betta_fish",
+        "blackbird",
         "capybara",
+        "cardinal",
         "chimpanzee",
+        "deer",
+        "elephant",
         "giraffe",
+        "gorilla",
         "kiwi",
+        "lemur",
         "lion",
+        "moose",
         "orangutan",
         "parrot",
         "rhino",
-        "sloth"
+        "sloth",
+        "tiger"
     ]

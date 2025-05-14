@@ -4,11 +4,12 @@ from animals import *
 from structures import *
 from people import *
 
+import copy
 import datetime
 import random
 
 # Get the class names of all the children of the animal class
-animal_type_list = [animal_type for animal_type in animal_base.animal_base.__subclasses__()]
+animal_type_list = animal_base.animal_base.__subclasses__()
 animal_type_name_list = [animal_type.__name__.replace("_", " ") for animal_type in animal_type_list]
 # similar thing for structures
 structure_type_list = [structure_type for structure_type in structure_base.structure_base.__subclasses__() if structure_type.__name__ != "entrance"]
@@ -151,7 +152,7 @@ def main():
                     case _:
                         menu_id = "main"
             case "addAnimal":
-                new_animal_type = prompt_options("What kind of animal do you want to add?", options=animal_type_name_list, columns = 3)
+                new_animal_type = prompt_options("What kind of animal do you want to add?", options=copy.deepcopy(animal_type_name_list), columns = 3)
                 if new_animal_type == "back":
                     print("Canceled.")
                     menu_id = "add"
@@ -179,7 +180,7 @@ def main():
                 print("\"" + new_animal_name + "\" is in the entrance")
                 menu_id = "main"
             case "addStaff":
-                new_staff_type = prompt_options("What type of staff do you want to add?", options=staff_type_name_list)
+                new_staff_type = prompt_options("What type of staff do you want to add?", options=copy.deepcopy(staff_type_name_list))
                 if new_staff_type == "back":
                     print("Canceled.")
                     menu_id = "add"
@@ -191,7 +192,7 @@ def main():
                 print("your new " + new_staff_type + " is in the entrance")
                 menu_id = "main"
             case "addStructure":
-                new_structure_type = prompt_options("What type of structure do you want to add?", options=structure_type_name_list)
+                new_structure_type = prompt_options("What type of structure do you want to add?", options=copy.deepcopy(structure_type_name_list))
                 if new_structure_type == "back":
                     print("Canceled.")
                     menu_id = "add"
