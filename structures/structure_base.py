@@ -29,4 +29,4 @@ class structure_base:
         for i in indices:
             self.staff[i].step(built_structures, self, s_i, i)
         # remove moved staff
-        self.guests = [s for s in self.staff if self.staff != "gone"]
+        self.staff = [s for s in self.staff if self.staff != "gone"]
