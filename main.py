@@ -154,7 +154,7 @@ def main():
             case "addAnimal":
                 new_animal_type = prompt_options("What kind of animal do you want to add?", options=copy.deepcopy(animal_type_name_list), columns = 3)
                 if new_animal_type == "back":
-                    print("Canceled.")
+                    print("Cancelled.")
                     menu_id = "add"
                     continue
                 # 2 loops for the price of one, grandma!
@@ -166,7 +166,7 @@ def main():
                         break
                     print("An animal already has that name!")
                 if new_animal_name == "Back":
-                    print("Canceled.")
+                    print("Cancelled.")
                     menu_id = "add"
                     continue
                 # Get the constructor...
@@ -182,7 +182,7 @@ def main():
             case "addStaff":
                 new_staff_type = prompt_options("What type of staff do you want to add?", options=copy.deepcopy(staff_type_name_list))
                 if new_staff_type == "back":
-                    print("Canceled.")
+                    print("Cancelled.")
                     menu_id = "add"
                     continue
                 staff_index = staff_type_name_list.index(new_staff_type)
@@ -194,7 +194,7 @@ def main():
             case "addStructure":
                 new_structure_type = prompt_options("What type of structure do you want to add?", options=copy.deepcopy(structure_type_name_list))
                 if new_structure_type == "back":
-                    print("Canceled.")
+                    print("Cancelled.")
                     menu_id = "add"
                     continue
                 current_structure_names = [s.name for s in built_structures]
@@ -208,7 +208,7 @@ def main():
                         break
                     print("A structure already has that name!")
                 if go_back:
-                    print("Canceled.")
+                    print("Cancelled.")
                     menu_id = "add"
                     continue
                 structure_index = structure_type_name_list.index(new_structure_type)
@@ -241,12 +241,12 @@ def main():
                     str_i += 1
                 remove_animal = prompt_options("Which animal?", options=current_animals, additions=current_animal_types)
                 if remove_animal == "back":
-                    print("Canceled.")
+                    print("Cancelled.")
                     menu_id = "remove"
                     continue
                 agree_to_remove = prompt("Are you sure? Please type the animal's name again to confirm.")
                 if remove_animal != agree_to_remove:
-                    print("Canceled.")
+                    print("Cancelled.")
                     menu_id = "main"
                     continue
                 remove_animal_index = current_animals.index(remove_animal)
@@ -255,17 +255,43 @@ def main():
                 animal_location = structure_location.animals.pop(location_index[1])
                 print(remove_animal + " has been removed")
                 menu_id = "main"
+            case "removeStaff":
+                current_staff_locations = dict()
+                current_staff_count_total = 0
+                i = 0
+                for structure in built_structures:
+                    j = 0
+                    for staff in structure.staff:
+                        if current_staff_locations.get(staff.role, -1) == -1:
+                            current_staff_locations[staff.role] = []
+                        current_staff_locations[staff.role].append([i, j])
+                        current_staff_count_total += 1
+                        j += 1
+                    i += 1
+                print("There are " + str(current_staff_count_total) + " employees")
+                staff_type_keys = sorted(current_staff_locations.keys())
+                removed_staff_type = prompt_options("What type of staff would you like to remove?", options=staff_type_keys, additions=[" " + str(len(current_staff_locations[staff_type])) + "x" for staff_type in staff_type_keys], columns=3)
+                if removed_staff_type == "back":
+                    print("Cancelled.")
+                    menu_id = "remove"
+                    continue
+
+                [remove_staff_structure_index, remove_staff_staff_index] = random.choice(current_staff_locations[removed_staff_type])
+                built_structures[remove_staff_structure_index].staff.pop(remove_staff_staff_index)
+                # you monster.
+                print("A " + removed_staff_type + " has been fired.")
+                menu_id = "main"
             case "removeStructure":
                 current_structure_names = [s.name for s in built_structures]
                 current_structure_types = ["(" + s.type + ")" for s in built_structures]
                 remove_structure_name = prompt_options("Which structure?", options=current_structure_names, additions=current_structure_types, columns=3)
                 if remove_structure_name == "back":
-                    print("Canceled.")
+                    print("Cancelled.")
                     menu_id = "remove"
                     continue
                 agree_to_remove = prompt("Are you sure? Please type the structure's name again to confirm.")
                 if remove_structure_name != agree_to_remove:
-                    print("Canceled.")
+                    print("Cancelled.")
                     menu_id = "main"
                     continue
                 remove_structure_index = current_structure_names.index(remove_structure_name)
@@ -274,7 +300,7 @@ def main():
                 built_structures[entrance_index].animals.extend(remove_structure.animals)
                 built_structures[entrance_index].guests.extend(remove_structure.guests)
                 built_structures[entrance_index].staff.extend(remove_structure.staff)
-                built_structures.pop(remove_animal_index)
+                built_structures.pop(remove_structure_index)
                 print("All the animals, staff, and guests in " + remove_structure_name + " have been moved to the entrance,\nand " + remove_structure_name + " has been removed.")
                 menu_id = "main"
             case "view":
@@ -336,7 +362,7 @@ def main():
                 current_structure_types = ["(" + s.type + ")" for s in built_structures]
                 view_structure_name = prompt_options("Which structure?", options=current_structure_names, additions=current_structure_types, columns=3)
                 if view_structure_name == "back":
-                    print("Canceled.")
+                    print("Cancelled.")
                     menu_id = "view"
                     continue
                 view_structure_index = current_structure_names.index(view_structure_name)
