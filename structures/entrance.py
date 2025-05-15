@@ -8,7 +8,7 @@ class entrance(structure_base):
         super().__init__(name)
         self.type = "entrance"
     
-    def step(self, s_i):
-        super().step(s_i)
+    def step(self, built_structures, s_i):
+        super().step(built_structures, s_i)
         for _ in range(random.randint(0, 3)):
             self.guests.append(guest())

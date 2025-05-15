@@ -1,5 +1,3 @@
-from master import *
-
 from animals import *
 from structures import *
 from people import *
@@ -7,6 +5,8 @@ from people import *
 import copy
 import datetime
 import random
+
+built_structures = []
 
 # Get the class names of all the children of the animal class
 animal_type_list = animal_base.animal_base.__subclasses__()
@@ -35,7 +35,7 @@ def step(delta: datetime.timedelta):
         indices = list(range(len(built_structures)))
         random.shuffle(indices)
         for i in indices:
-            built_structures[i].step(i)
+            built_structures[i].step(built_structures, i)
 
 # amount of additions, changes, or deletions required to convert s into t
 def levenshtein_distance(s, t):
@@ -290,9 +290,9 @@ def main():
                 current_animal_types = []
                 current_animal_locations = []
                 str_i = 0
-                for new_structure_type in built_structures:
+                for structure in built_structures:
                     ani_i = 0
-                    for animal_type in new_structure_type.animals:
+                    for animal_type in structure.animals:
                         current_animals.append(animal_type.name)
                         current_animal_types.append("(" + type(animal_type).__name__.replace("_", " ") + ")")
                         current_animal_locations.append([str_i, ani_i])
@@ -317,18 +317,19 @@ def main():
                     menu_id = "main"
                     continue
                 current_structure_names = [s.name for s in built_structures]
-                structure_to_move = prompt_options("Where would you like to move " + new_animal_type + "?", options=current_structure_names)
+                current_structure_types = [" (" + s.type + ")" for s in built_structures]
+                structure_to_move = prompt_options("Where would you like to move " + view_animal + "?", options=current_structure_names, additions=current_structure_types)
                 if structure_to_move == "back":
                     menu_id = "main"
                     continue
                 structure_to_move_index = current_structure_names.index(structure_to_move)
                 if structure_to_move_index == location_index[0]:
-                    print(new_animal_type + " is already there!")
+                    print(view_animal + " is already there!")
                     menu_id = "main"
                     continue
                 # move the animal
                 built_structures[structure_to_move_index].animals.append(built_structures[location_index[0]].animals.pop(location_index[1]))
-                print(new_animal_type + " has been moved")
+                print(view_animal + " has been moved")
                 menu_id = "main"
             case "viewStructures":
                 current_structure_names = [s.name for s in built_structures]
@@ -342,8 +343,8 @@ def main():
                 view_structure = built_structures[view_structure_index]
                 match prompt_options("What do you want to see inside " + view_structure_name + "?", ["animals", "people"]):
                     case "animals":
-                        print("There are " + len(view_structure.animals) + " animals here")
-                        display_columns([a.name + "  (" + a.__name__.replace("_", " ") + ")" for a in view_structure.animals], 3)
+                        print("There are " + str(len(view_structure.animals)) + " animals here")
+                        display_columns([a.name + "  (" + type(a).__name__.replace("_", " ") + ")" for a in view_structure.animals], 3)
                     case "people":
                         staff_count = dict()
                         for s in view_structure.staff:

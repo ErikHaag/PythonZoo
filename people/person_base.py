@@ -5,13 +5,13 @@ class person_base:
         self.move_timer = 0
         self.activity_timer = 0
     
-    def step(self, structureContext, s_i, p_i):
+    def step(self, built_structures, structureContext, s_i, p_i):
         if self.activity_timer >= 0 and self.move_timer >= 0:
-            self.maybe_move(structureContext, s_i, p_i)
+            self.maybe_move(built_structures, structureContext, s_i, p_i)
         if self.move_timer < 0:
             self.move_timer -= 1
         if self.activity_timer < 0:
             self.move_timer -= 1
     
-    def maybe_move(self, structureContext, s_i, p_i):
+    def maybe_move(self, built_structures, structureContext, s_i, p_i):
         pass
