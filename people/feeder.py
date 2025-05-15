@@ -18,6 +18,7 @@ class feeder(staff_base):
         for structure in built_structures:
             for animal in structure.animals:
                 if animal.hunger < smallest_hunger:
+                    smallest_hunger = animal.hunger
                     smallest_hunger_index = smallest_hunger_index
             smallest_hunger_index += 1
         # if global hunger is smaller than the local one, then move

@@ -28,5 +28,5 @@ class structure_base:
         random.shuffle(indices)
         for i in indices:
             self.staff[i].step(built_structures, self, s_i, i)
-        # remove moved guests
+        # remove moved staff
         self.guests = [s for s in self.staff if self.staff != "gone"]
