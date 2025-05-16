@@ -6,6 +6,9 @@ import copy
 import datetime
 import random
 
+# global variables
+accumulated_seconds = 0
+agreements = ("sure", "y", "yea", "yeah", "yes", "yep")
 built_structures = []
 
 # Get the class names of all the children of the animal class
@@ -18,8 +21,6 @@ structure_type_name_list = [structure_type.__name__.replace("_", " ") for struct
 staff_type_list = staff_base.staff_base.__subclasses__()
 staff_type_name_list = [staff_type.__name__.replace("_", " ") for staff_type in staff_type_list]
 
-global accumulated_seconds
-accumulated_seconds = 0
 
 def step(delta: datetime.timedelta):
     global built_structures
@@ -81,6 +82,8 @@ def prompt(prompt : str):
     return answer
 
 def prompt_options(prompt : str, options : list = [], additions : list = [], columns : int = 2, include_back : bool = True):
+    global agreements
+    
     has_additions = len(additions) != 0
     if has_additions:
         if len(options) != len(additions):
@@ -111,7 +114,7 @@ def prompt_options(prompt : str, options : list = [], additions : list = [], col
                 closest_option = option
         # ensure the user agrees 
         agreement = input("\"" + answer + "\" is not a valid option, did you mean \"" + closest_option + "\"? ")
-        if agreement.lower() in ("sure", "y", "yea", "yeah", "yes", "yep"):
+        if agreement.lower() in agreements:
             # if they agree, select it.
             answer = closest_option
             break
@@ -120,11 +123,94 @@ def prompt_options(prompt : str, options : list = [], additions : list = [], col
     
     return answer
 
+def load():
+    global accumulated_seconds
+    global built_structures
+    try:
+        with open("save.txt") as f:
+            animal_t = animal_base.animal_base.__subclasses__()
+            animal_n = [a.__name__ for a in animal_t]
+            structure_t = structure_base.structure_base.__subclasses__()
+            structure_n = [s.__name__ for s in structure_t]
+            staff_t = staff_base.staff_base.__subclasses__()
+            staff_n = [s.__name__ for s in staff_t]
+            
+            state = "globals"
+            state_i = 0
+            # for each line in the file
+            for line in f:
+                if line.endswith("\n"):
+                    line = line[:-1]
+                line = line.split(" ")
+                match state:
+                    case "globals":
+                        accumulated_seconds = int(line[0])
+                        state = "structures"
+                    case "structures":
+                        # add all the structures
+                        if line[0] == "EOS":
+                            state = "animals"
+                            state_i = 0
+                            continue
+                        new_structure = structure_t[structure_n.index(line[0])](line[1].replace("_", " "))
+                        built_structures.append(new_structure)
+                    case "animals":
+                        # add all the animals
+                        if line[0] == "EOS":
+                            state = "guests"
+                            state_i = 0
+                            continue
+                        if line[0] == "next":
+                            state_i += 1
+                            continue
+                        [t, n, a_t, hp, hg] = line
+                        new_animal = animal_t[animal_n.index(t)](n.replace("_", " "))
+                        new_animal.activity_timer = int(a_t)
+                        new_animal.happiness = int(hp)
+                        new_animal.hunger = int(hg)
+                        built_structures[state_i].animals.append(new_animal)
+                    case "guests":
+                        # add all guests
+                        if line[0] == "EOS":
+                            state = "staff"
+                            state_i = 0
+                            continue
+                        if line[0] == "next":
+                            state_i += 1
+                            continue
+                        # asterisk denotes spread syntax, so s_s is a list
+                        [a_t, m_t, *s_s] = line
+                        new_guest = guest.guest()
+                        new_guest.activity_timer = int(a_t)
+                        new_guest.move_timer = int(m_t)
+                        new_guest.structures_seen = s_s
+                        built_structures[state_i].guests.append(new_guest)
+                    case "staff":
+                        # add all staff
+                        if line[0] == "next":
+                            state_i += 1
+                            continue
+                        [t, a_t, m_t] = line
+                        new_staff = staff_t[staff_n.index(t)]()
+                        new_staff.activity_timer = int(a_t)
+                        new_staff.move_timer = int(m_t)
+                        built_structures[state_i].staff.append(new_staff)
+                    case _:
+                        pass
+    except FileNotFoundError:
+        # failed to read file, create new game
+        built_structures = [entrance.entrance("entrance")]
+        return
+
+
+
 
 def main():
+    global agreements
     global built_structures
+    
+    load()
 
-    built_structures = [entrance.entrance("entrance")]
     menu_id = "main"
     while True:
         match menu_id:
@@ -370,7 +456,7 @@ def main():
                 print("Activity:  " + str(animal_location.activity_timer))
                 # confirm move
                 print("\nDo you want to move this animal?\n")
-                if input("> ") not in ("sure", "y", "yea", "yeah", "yes", "yep"):
+                if input("> ") not in agreements:
                     menu_id = "main"
                     continue
                 # get all structures
@@ -431,6 +517,28 @@ def main():
             case _:
                 print("menu id \"" + menu_id + "\" not found, returning to home.")
                 menu_id = "main"
-    # TODO?: saving and loading
+
+    save = input("Do you want to save?\n> ")
+    if save not in agreements:
+        return
+    # save game
+    global accumulated_seconds
+    lines = [str(accumulated_seconds)]
+    lines.extend([type(structure).__name__ + " " + structure.name.replace(" ", "_") for structure in built_structures])
+    lines.append("EOS") # End of section
+    for s in built_structures:
+        lines.extend([type(animal).__name__ + " " + animal.name.replace(" ", "_") + " " + str(animal.activity_timer) + " " + str(animal.happiness) + " " + str(animal.hunger) for animal in s.animals])
+        lines.append("next")
+    lines.append("EOS") # End of section
+    for s in built_structures:
+        lines.extend([str(guest.activity_timer) + " " + str(guest.move_timer) + " " + " ".join(guest.structures_seen) for guest in s.guests])
+        lines.append("next")
+    lines.append("EOS") # End of section
+    for s in built_structures:
+        lines.extend([type(staff).__name__ + " " + str(staff.activity_timer) + " " + str(staff.move_timer) for staff in s.staff])
+        lines.append("next")
+    with open("save.txt", "w") as f:
+        f.write("\n".join(lines))
+        f.close()
 
 main()
