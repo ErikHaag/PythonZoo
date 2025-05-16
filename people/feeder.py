@@ -1,5 +1,7 @@
 from .staff_base import staff_base
 
+import random
+
 class feeder(staff_base):
     def __init__(self):
         super().__init__()
@@ -24,5 +26,6 @@ class feeder(staff_base):
             i += 1
         # if global hunger is smaller than the local one, then move
         if smallest_hunger + 10 < smallest_local_hunger:
+            self.move_timer = random.randint(2)
             self.moving_to = smallest_hunger_index
             return

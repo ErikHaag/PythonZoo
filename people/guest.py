@@ -18,5 +18,6 @@ class guest(person_base):
             s = built_structures[i]
             if s.name not in self.structures_seen:
                 self.structures_seen.append(s.name)
+                self.move_timer = 3
                 s.moving_to = i
                 return

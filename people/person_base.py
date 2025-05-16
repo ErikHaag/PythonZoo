@@ -9,7 +9,7 @@ class person_base:
     def step(self, built_structures, structureContext, s_i, p_i):
         if self.activity_timer >= 0 and self.move_timer >= 0:
             self.maybe_move(built_structures, structureContext, s_i, p_i)
-        if self.move_timer < 0:
+        if self.moving_to == -1 and self.move_timer < 0:
             self.move_timer -= 1
         if self.activity_timer < 0:
             self.move_timer -= 1

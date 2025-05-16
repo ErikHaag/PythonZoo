@@ -14,7 +14,7 @@ class blackbird(animal_base):
                 feeder_index = i
                 break
             i += 1
-        if self.hunger <= 30 and feeder_index != -1:
+        if self.hunger <= 30 and feeder_index != -1 and staff.activity_timer == 0 and staff.move_timer == 0:
             self.hunger += 50
             self.happiness += 10
             structureContext.staff[feeder_index].activity_timer = 2

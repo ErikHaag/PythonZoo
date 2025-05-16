@@ -9,7 +9,7 @@ class rhino(animal_base):
         feeder_index = -1
         i = 0
         for staff in structureContext.staff:
-            if staff.role == "feeder":
+            if staff.role == "feeder" and staff.activity_timer == 0 and staff.move_timer == 0:
                 feeder_index = i
                 break
             i += 1
