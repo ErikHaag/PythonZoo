@@ -20,13 +20,26 @@ class structure_base:
         random.shuffle(indices)
         for i in indices:
             self.guests[i].step(built_structures, self, s_i, i)
-        # remove moved guest
-        self.guests = [g for g in self.guests if self.guests != "gone"]
+        
+        # remove leaving guests
+        self.guests = [g for g in self.guests if g != "leaving"]
+
+        # move all the guests who want to move
+        moving_guests_indices = [i for i in range(len(self.guests) - 1, -1, -1) if self.guests[i].moving_to != -1]
+        for i in moving_guests_indices:
+            to = self.guests[i].moving_to
+            self.guests[i].moving_to = -1
+            built_structures[to].guests.append(self.guests.pop(i))
 
         # update staff in random order
         indices = list(range(len(self.staff)))
         random.shuffle(indices)
         for i in indices:
             self.staff[i].step(built_structures, self, s_i, i)
-        # remove moved staff
-        self.staff = [s for s in self.staff if self.staff != "gone"]
+        
+        # move all staff who want to move
+        moving_staff_indices = [i for i in range(len(self.staff) - 1, -1, -1) if self.staff[i].moving_to != -1]
+        for i in moving_staff_indices:
+            to = self.staff[i].moving_to
+            self.staff[i].moving_to = -1
+            built_structures[to].staff.append(self.staff.pop(i))

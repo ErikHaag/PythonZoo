@@ -14,15 +14,15 @@ class feeder(staff_base):
         
         # find the lowest hunger of any animal in the zoo, and where it is
         smallest_hunger = 100
-        smallest_hunger_index = 0 
+        smallest_hunger_index = 0
+        i = 0
         for structure in built_structures:
             for animal in structure.animals:
                 if animal.hunger < smallest_hunger:
                     smallest_hunger = animal.hunger
-                    smallest_hunger_index = smallest_hunger_index
-            smallest_hunger_index += 1
+                    smallest_hunger_index = i
+            i += 1
         # if global hunger is smaller than the local one, then move
         if smallest_hunger + 10 < smallest_local_hunger:
-            built_structures[smallest_hunger_index].staff.append(built_structures[structure_i].staff[staff_i])
-            built_structures[structure_i].staff[staff_i] = "gone"
+            self.moving_to = smallest_hunger_index
             return

@@ -10,7 +10,7 @@ class guest(person_base):
     def maybe_move(self, built_structures, structureContext, s_i, p_i):
         if len(self.structures_seen) > 10 or len(self.structures_seen) >= len(built_structures) :
             # leave zoo
-            built_structures[s_i].guests[p_i] = "gone"
+            built_structures[s_i].guests[p_i] = "leaving"
             return
         structure_indices = list(range(len(built_structures)))
         random.shuffle(structure_indices)
@@ -18,6 +18,5 @@ class guest(person_base):
             s = built_structures[i]
             if s.name not in self.structures_seen:
                 self.structures_seen.append(s.name)
-                built_structures[i].guests.append(built_structures[s_i].guests[p_i])
-                built_structures[s_i].guests[p_i] = "gone"
+                s.moving_to = i
                 return
